@@ -23,5 +23,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/userDetailsEmail"
         android:layout_marginTop="6dp"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete My Account"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:id="@+id/DeleteMyAccount"/>
 
 </LinearLayout>

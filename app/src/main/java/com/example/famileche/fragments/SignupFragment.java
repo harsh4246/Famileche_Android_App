@@ -1,9 +1,11 @@
 package com.example.famileche.fragments;
 
 
+import android.content.ContentResolver;
 import android.content.Intent;
 
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -45,6 +47,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,6 +63,8 @@ public class SignupFragment extends Fragment {
     private CircleImageView imgUserInfo;
     private static final int GALLERY_ADD_PROFILE=1;
     private static final int PICK_IMAGE=100;
+
+
 
     private String value;
     private String imagePath;
@@ -173,11 +178,34 @@ public class SignupFragment extends Fragment {
 
             String uri=imgUri.getPath();
             File file=new File(uri);
-            final String[] split=file.getPath().split("raw");
 
-            imagePath = split[1];
-            //imagePath = imgUri.getPath();
+            try {
+                final String[] split=file.getPath().split("raw");
+                imagePath = split[1];
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                imagePath=getRealPathFromURI(imgUri);
+                Log.d("ImagePath",imagePath);
+
+
+            }
+
         }
+    }
+
+    private String getRealPathFromURI(Uri imgUri) {
+        String result;
+        Cursor cursor = getActivity().getContentResolver().query(imgUri, null, null, null, null);
+        if (cursor == null) {
+            result = imgUri.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
     }
 
     private void register() {
@@ -188,14 +216,14 @@ public class SignupFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Response", response);
-                        Toast.makeText(getActivity().getApplicationContext(), "Photo Uploaded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "User Registerd", Toast.LENGTH_SHORT).show();
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameAuthContainer, new SigninFragment()).commit();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(getActivity().getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "User already exists", Toast.LENGTH_SHORT).show();
             }
         });
 

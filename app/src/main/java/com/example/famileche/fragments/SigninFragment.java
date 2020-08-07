@@ -156,12 +156,14 @@ public class SigninFragment extends Fragment {
                 }
 
             } catch (JSONException err){
+                Toast.makeText(getContext(),"Username or password incorrect",Toast.LENGTH_SHORT).show();
                 err.printStackTrace();
             }
 
 
 
         },error -> {
+            Toast.makeText(getContext(),"Username or password incorrect",Toast.LENGTH_SHORT).show();
             error.printStackTrace();
         }){
             @Override

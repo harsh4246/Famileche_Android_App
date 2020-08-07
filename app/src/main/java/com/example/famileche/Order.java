@@ -78,6 +78,7 @@ public class Order extends AppCompatActivity {
                 {
                     Log.d("Order",response);
                     Toast.makeText(this,"Order Placed",Toast.LENGTH_LONG).show();
+                    finish();
 
 
 
@@ -113,7 +114,7 @@ public class Order extends AppCompatActivity {
             protected Map<String, String> getParams()  {
                 HashMap<String,String>map=new HashMap<>();
                 map.put("quantity",orderQuantity.getText().toString().trim());
-                map.put("productId",getIntent().getStringExtra("productId").toString());
+                map.put("productId", getIntent().getStringExtra("productId"));
                 Log.d("Order","params delivered");
                 return map;
             }

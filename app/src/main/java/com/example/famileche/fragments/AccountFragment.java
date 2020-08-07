@@ -18,10 +18,12 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.error.AuthFailureError;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.famileche.Constant;
 import com.example.famileche.HomeActivity;
+import com.example.famileche.MainActivity;
 import com.example.famileche.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -41,6 +43,7 @@ public class AccountFragment extends Fragment {
     private TextView Name, Email, Id;
     private CircleImageView UserImage;
     private SharedPreferences sharedPreferences;
+    private Button deleteButton;
 
 
 
@@ -63,8 +66,60 @@ public class AccountFragment extends Fragment {
         Id=view.findViewById(R.id.userDetailsId);
         UserImage=view.findViewById(R.id.userDetailsImage);
         sharedPreferences=getContext().getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        deleteButton=view.findViewById(R.id.DeleteMyAccount);
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteAccount();
+            }
+        });
 
         setUser();
+    }
+
+    private void deleteAccount() {
+        Volley.newRequestQueue(getContext()).getCache().clear();
+
+        StringRequest request=new StringRequest(Request.Method.DELETE, Constant.USERS+sharedPreferences.getString("_id",""), response -> {
+            try {
+
+                JSONObject object=new JSONObject(response);
+
+                Log.d("DeleteAccount",response);
+                Intent intent=new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+                Toast.makeText(getContext(),"Account Deleted",Toast.LENGTH_LONG).show();
+
+
+            } catch (JSONException err){
+                Toast.makeText(getContext(),"Error Occured Deleting your account",Toast.LENGTH_SHORT).show();
+                err.printStackTrace();
+            }
+
+
+
+        },error -> {
+            Toast.makeText(getContext(),"Error Occured Deleting your account",Toast.LENGTH_SHORT).show();
+            error.printStackTrace();
+        }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                String token = sharedPreferences.getString("value", "");
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("Authorization", token);
+                map.put("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+                map.put("Pragma", "no-cache"); // HTTP 1.0.
+                map.put("Expires", "0");
+                Log.d("token", token);
+
+                return map;
+            }
+        };
+
+        RequestQueue queue= Volley.newRequestQueue(getContext());
+        queue.add(request);
     }
 
     private void setUser() {

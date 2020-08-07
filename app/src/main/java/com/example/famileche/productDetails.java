@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +30,7 @@ public class productDetails extends AppCompatActivity {
     private TextView productDetailsName,productDetailsPrice,productDetailsDescription;
     private ImageView productDetailsImage;
     private SharedPreferences sharedPreferences;
+    private Button orderNow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,16 @@ public class productDetails extends AppCompatActivity {
         productDetailsImage=findViewById(R.id.productDetailsImage);
         productDetailsDescription=findViewById(R.id.productDetailsDescription);
         sharedPreferences=this.getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        orderNow=findViewById(R.id.productDetailsOrderNow);
+
+        orderNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent2=new Intent(view.getContext(), Order.class);
+                intent2.putExtra("productId",getIntent().getStringExtra("productId"));
+                view.getContext().startActivity(intent2);
+            }
+        });
 
 
 
